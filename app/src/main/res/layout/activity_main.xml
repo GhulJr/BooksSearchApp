@@ -9,11 +9,10 @@
     <EditText
         android:id="@+id/editText"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="48dp"
         android:imeOptions="actionSearch"
         android:inputType="text"
         android:hint="@string/search"
-        app:layout_constraintVertical_weight="1"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -23,10 +22,11 @@
         android:id="@+id/my_recycler_view"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="660dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editText"/>
+        app:layout_constraintTop_toBottomOf="@id/editText"
+       />
 
 
 

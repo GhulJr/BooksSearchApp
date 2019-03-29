@@ -44,7 +44,8 @@ public class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.MyViewHolder
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
         TextView author = myViewHolder.linearLayout.findViewById(R.id.author);
-        author.setText(books.get(i).getAuthor());
+        String authors = formatAuthors(books.get(i).getAuthor());
+        author.setText(authors);
         TextView title = myViewHolder.linearLayout.findViewById(R.id.title);
         title.setText(books.get(i).getTitle());
     }
@@ -52,5 +53,14 @@ public class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.MyViewHolder
     @Override
     public int getItemCount() {
         return books.size();
+    }
+
+    private String formatAuthors( List<String> authors) {
+        StringBuilder buffer = new StringBuilder();
+        for(int i = 0; i < authors.size(); ++i) {
+            if(i!=0) buffer.append(", ");
+            buffer.append(authors.get(i));
+        }
+        return  buffer.toString();
     }
 }

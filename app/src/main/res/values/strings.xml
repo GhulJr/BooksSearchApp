@@ -3,4 +3,6 @@
     <string name="title">Title</string>
     <string name="author_name">Author Name</string>
     <string name="search">Search...</string>
+    <string name="unknown">Unknown</string>
+
 </resources>
