@@ -13,9 +13,9 @@
 
 
     <ImageView
+        android:id="@+id/my_image"
         android:layout_width="64dp"
-        android:layout_height="96dp"
-        android:background="@drawable/content"/>
+        android:layout_height="96dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"

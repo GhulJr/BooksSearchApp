@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -48,6 +49,8 @@ public class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.MyViewHolder
         author.setText(authors);
         TextView title = myViewHolder.linearLayout.findViewById(R.id.title);
         title.setText(books.get(i).getTitle());
+        ImageView image = myViewHolder.linearLayout.findViewById(R.id.my_image);
+        image.setImageBitmap(books.get(i).getImage());
     }
 
     @Override

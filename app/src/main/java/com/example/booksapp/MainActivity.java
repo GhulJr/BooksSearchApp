@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
-
+//TODO: If possible, change all final field (objects used inside internal classes) to use setters.
 public class MainActivity extends FragmentActivity {
 
     private RecyclerView recyclerView;
@@ -28,21 +28,23 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         recyclerView = findViewById(R.id.my_recycler_view);
-        editText = findViewById(R.id.editText);
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
         recyclerView.setHasFixedSize(true);
-
+        editText = findViewById(R.id.editText);
         // use a linear layout manager
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+        //Setting observer(UI changes)
+
 
         final BooksViewModel model = ViewModelProviders.of(this).get(BooksViewModel.class);
-        model.getBooks().observe(this, new Observer<List<Book>>() {
+        model.getBooks().observeForever(new Observer<List<Book>>() {
             @Override
             public void onChanged(@Nullable List<Book> books) {
-                mAdapter = new BooksAdapter(books);
-                recyclerView.setAdapter(mAdapter);
+                if (mAdapter == null) {
+                    mAdapter = new BooksAdapter(books); //TODO:Try edit current adapter rather than creating new one
+                    recyclerView.setAdapter(mAdapter);
+                }
+               mAdapter.notifyDataSetChanged();
             }
         });
 
@@ -50,19 +52,12 @@ public class MainActivity extends FragmentActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    mAdapter = null;
                     model.searchWebForBooks(editText.getText().toString());
                     return true;
                 }
                 return false;
             }
         });
-
-
-
-
-
-
-
-
     }
 }

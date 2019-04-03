@@ -60,7 +60,7 @@ public final class QueryUtils {
                     authors.add("Unknown");
                 }
 
-                books.add(new Book(title, authors,"PLACEHOLDER"));
+                books.add(new Book(title, authors,null));
             }
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Failed to extract JSONObject");
@@ -136,9 +136,14 @@ public final class QueryUtils {
         return output.toString();
     }
 
-    private static String extractJSONObject(JSONObject obj, String key) {
+    public static String extractStringFromJSONObject(JSONObject obj, String key) {
         if(obj.has(key)) return obj.optString(key);
-        return "Unknown"; //TODO: return string resource
+        return null; //TODO: return string resource
+    }
+
+    public static JSONObject extractJSONObject(JSONObject obj, String key) {
+        if(obj.has(key)) return obj.optJSONObject(key);
+        return null; //TODO: return string resource
     }
 
     private static JSONArray extractJSONArray(JSONObject obj, String key) {

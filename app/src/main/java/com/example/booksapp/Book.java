@@ -1,13 +1,15 @@
 package com.example.booksapp;
 
+import android.graphics.Bitmap;
+
 import java.util.List;
 
 public class Book {
     private String title;
     private List<String> authors;
-    private String image; //TODO:meybe change to url object
+    private Bitmap image; //TODO:meybe change to url object
 
-    public Book(String title, List<String> author, String image) {
+    public Book(String title, List<String> author, Bitmap image) {
         this.title = title;
         this.authors = author;
         this.image = image;
@@ -17,11 +19,15 @@ public class Book {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public  List<String> getAuthor() {
         return authors;
+    }
+
+    public Bitmap getImage() {
+        return image;
+    }
+
+    public void setImage(Bitmap bitmap) {
+        image = bitmap;
     }
 }
