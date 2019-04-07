@@ -7,14 +7,14 @@ import java.util.List;
 public class Book {
     private String title;
     private List<String> authors;
-    private Bitmap image; //TODO:meybe change to url object
-
+    private Bitmap image;
+    //Constructors
     public Book(String title, List<String> author, Bitmap image) {
         this.title = title;
         this.authors = author;
         this.image = image;
     }
-
+    //Getters
     public String getTitle() {
         return title;
     }
@@ -26,7 +26,7 @@ public class Book {
     public Bitmap getImage() {
         return image;
     }
-
+    //Setters
     public void setImage(Bitmap bitmap) {
         image = bitmap;
     }

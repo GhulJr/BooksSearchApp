@@ -1,5 +1,7 @@
 package com.example.booksapp;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -26,7 +28,6 @@ public final class QueryUtils {
 
     public static URL createUrl(String url) {
         URL u = null;
-
         try {
             u = new URL(url);
         } catch (MalformedURLException e) {
@@ -36,10 +37,10 @@ public final class QueryUtils {
             return u;
         }
     }
-
+    //TODO: create more general method to replace this and extractImages methods
+    //
     public static List<Book> extractSearchedBooks(String jsonResponse) {
        List<Book> books = new ArrayList<>();
-
 
         try {
             JSONObject root = new JSONObject(jsonResponse);
@@ -154,4 +155,29 @@ public final class QueryUtils {
         return null;
     }
 
+    public static List<Bitmap> extractImages(String jsonResponse) {
+        List<Bitmap> image = new ArrayList<>();
+        try {
+            JSONObject root = new JSONObject(jsonResponse);
+            JSONArray items = root.optJSONArray("items");
+
+            for(int i = 0; i < items.length();++i){
+                JSONObject obj = items.getJSONObject(i).optJSONObject("volumeInfo");
+                JSONObject jsonImage = QueryUtils.extractJSONObject(obj, "imageLinks");
+                if(jsonImage!=null) {
+                    String imageHTTP = QueryUtils.extractStringFromJSONObject(jsonImage,"smallThumbnail");
+                    InputStream in = new URL(imageHTTP).openStream();
+                    image.add(BitmapFactory.decodeStream(in));
+                }
+                else{
+                    image.add(null);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+            return image;
+        }
+    }
 }
