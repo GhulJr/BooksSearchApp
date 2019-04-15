@@ -22,10 +22,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class QueryUtils {
-
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
 
-
+    /**
+     * Create URL object from String
+     * @param url
+     * @return URL object
+     */
     public static URL createUrl(String url) {
         URL u = null;
         try {
@@ -37,18 +40,23 @@ public final class QueryUtils {
             return u;
         }
     }
-    //TODO: create more general method to replace this and extractImages methods
-    //
+    /**
+     * Extract texts from jsonResponse
+     * @param jsonResponse
+     * @return list of books
+     */
     public static List<Book> extractSearchedBooks(String jsonResponse) {
-       List<Book> books = new ArrayList<>();
-
-        try {
+        List<Book> books = new ArrayList<>();
+        try {//Create objects
             JSONObject root = new JSONObject(jsonResponse);
             JSONArray items = root.optJSONArray("items");
-
+            //For every single item extract data
             for(int i = 0; i < items.length(); ++i) {
-                JSONObject obj = items.getJSONObject(i).optJSONObject("volumeInfo"); //TODO: pictures are stored somewhere else
+                //Volume info for every item
+                JSONObject obj = items.getJSONObject(i).optJSONObject("volumeInfo");
+                //Title
                 String title = obj.optString("title");
+                //Extract authors if exist, otherwise set to "Unknown"
                 JSONArray arrayAuthors = extractJSONArray(obj, "authors");
                 List<String> authors = new ArrayList<>(); //TODO: use some different than List (if it provides optimalisation
                 if(arrayAuthors!=null){
@@ -60,28 +68,56 @@ public final class QueryUtils {
                 else {
                     authors.add("Unknown");
                 }
-
-                books.add(new Book(title, authors,null));
+                //Create book instance with extracted data
+                books.add(new Book(title, authors));
             }
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Failed to extract JSONObject");
         }
-
+        //Return list
         return books;
     }
-
-    //TODO: Finish this.
-    public static List<Book> extractBookInfo(URL url) {
-        List<Book> books = new ArrayList<>();
-
-
-        return books;
+    /**
+     * Extract images from jsonResponse
+     * @param jsonResponse
+     * @return list of bitmaps
+     */
+    public static List<Bitmap> extractImages(String jsonResponse) {
+        List<Bitmap> images = new ArrayList<>();
+        try {//Create objects
+            JSONObject root = new JSONObject(jsonResponse);
+            JSONArray items = root.optJSONArray("items");
+            //Extracting images if exist, add null otherwise
+            for(int i = 0; i < items.length();++i){
+               images.add(extractSingleImage(items.getJSONObject(i)));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+            return images;
+        }
+    }
+    //TODO
+    public static Bitmap extractSingleImage(JSONObject jsonObject) throws IOException {
+        JSONObject obj = jsonObject.optJSONObject("volumeInfo");
+        JSONObject jsonImage = QueryUtils.extractJSONObject(obj, "imageLinks");
+        if (jsonImage != null) {
+            String imageHTTP = QueryUtils.extractStringFromJSONObject(jsonImage, "smallThumbnail");
+            InputStream in = new URL(imageHTTP).openStream();
+            return BitmapFactory.decodeStream(in);
+        }
+        return null;
     }
 
-
+    /**
+     * Extract jsonResponse from given URL object
+     * @param url
+     * @return jsonResponse as String
+     */
     public static String makeHttpRequest(URL url) {
         String jsonResponse = "";
-
+        //If given url doesn't exist, return empty response
         if(url == null) {
             return jsonResponse;
         }
@@ -89,7 +125,7 @@ public final class QueryUtils {
         HttpURLConnection urlConnection = null;
         InputStream inputStream = null;
 
-        try {
+        try { //Try to establish connection
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.setReadTimeout(/*In millis*/10000);
@@ -122,7 +158,12 @@ public final class QueryUtils {
         }
         return jsonResponse;
     }
-
+    /**
+     * Read data from InputStream
+     * @param inputStream
+     * @return
+     * @throws IOException
+     */
     private static String readFromStream(InputStream inputStream) throws IOException {
         StringBuilder output = new StringBuilder();
         if(inputStream != null) {
@@ -136,18 +177,33 @@ public final class QueryUtils {
         }
         return output.toString();
     }
-
+    /**
+     * Extract value of key from obj
+     * @param obj
+     * @param key
+     * @return extracted value
+     */
     public static String extractStringFromJSONObject(JSONObject obj, String key) {
         if(obj.has(key)) return obj.optString(key);
-        return null; //TODO: return string resource
+        return null;
     }
-
+    /**
+     * Extract JSONObjcet of key from obj
+     * @param obj
+     * @param key
+     * @return extracted JSONObject
+     */
     public static JSONObject extractJSONObject(JSONObject obj, String key) {
         if(obj.has(key)) return obj.optJSONObject(key);
-        return null; //TODO: return string resource
+        return null;
     }
-
-    private static JSONArray extractJSONArray(JSONObject obj, String key) {
+    /**
+     * Extract array of key from obj
+     * @param obj
+     * @param key
+     * @return extracted JSONArray
+     */
+    public static JSONArray extractJSONArray(JSONObject obj, String key) {
         if(obj.has(key)){
             JSONArray array = obj.optJSONArray(key);
             return  array;
@@ -155,29 +211,4 @@ public final class QueryUtils {
         return null;
     }
 
-    public static List<Bitmap> extractImages(String jsonResponse) {
-        List<Bitmap> image = new ArrayList<>();
-        try {
-            JSONObject root = new JSONObject(jsonResponse);
-            JSONArray items = root.optJSONArray("items");
-
-            for(int i = 0; i < items.length();++i){
-                JSONObject obj = items.getJSONObject(i).optJSONObject("volumeInfo");
-                JSONObject jsonImage = QueryUtils.extractJSONObject(obj, "imageLinks");
-                if(jsonImage!=null) {
-                    String imageHTTP = QueryUtils.extractStringFromJSONObject(jsonImage,"smallThumbnail");
-                    InputStream in = new URL(imageHTTP).openStream();
-                    image.add(BitmapFactory.decodeStream(in));
-                }
-                else{
-                    image.add(null);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        finally {
-            return image;
-        }
-    }
 }
